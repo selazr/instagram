@@ -20,9 +20,12 @@ export default function UpdateProfileInformationForm({ mustVerifyEmail, status, 
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'), {
+        post(route('profile.update'), {
+            _method: 'patch',
             preserveScroll: true,
+            onSuccess: () => setData('avatar', null),
             onError: () => setData('avatar', null),
+            forceFormData: true,
         });
     };
 
