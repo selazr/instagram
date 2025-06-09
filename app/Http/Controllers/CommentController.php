@@ -45,7 +45,7 @@ class CommentController extends Controller
             : back();
     }
 
-    public function destroy(Comment $comment)
+    public function destroy(Request $request, Comment $comment)
     {
         if ($comment->user_id !== Auth::id()) {
             abort(403, 'No tienes permiso para eliminar este comentario.');
