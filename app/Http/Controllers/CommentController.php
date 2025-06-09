@@ -21,7 +21,9 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'created'])
+            : back();
     }
 
     public function update(Request $request, Comment $comment)
@@ -38,7 +40,9 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'updated'])
+            : back();
     }
 
     public function destroy(Comment $comment)
@@ -49,6 +53,8 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'deleted'])
+            : back();
     }
 }
