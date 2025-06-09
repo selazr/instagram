@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
+import LikeButton from '@/Components/LikeButton';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState } from 'react';
@@ -15,6 +16,8 @@ export default function Show({ image }) {
         image_id: image.id,
     });
 
+    const { delete: destroyImage } = useForm();
+
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState('');
 
@@ -27,6 +30,7 @@ export default function Show({ image }) {
 
     const handleEditSubmit = (e, commentId) => {
         e.preventDefault();
+        e.stopPropagation();
         window.axios.put(route('comments.update', commentId), {
             content: editingContent,
         }).then(() => {
@@ -34,7 +38,8 @@ export default function Show({ image }) {
         });
     };
 
-    const handleDelete = (commentId) => {
+    const handleDelete = (commentId, e) => {
+        e?.stopPropagation();
         if (confirm('¿Seguro que quieres eliminar este comentario?')) {
             window.axios.delete(route('comments.destroy', commentId)).catch(err => {
                 alert('❌ Error al eliminar el comentario.');
@@ -59,7 +64,36 @@ export default function Show({ image }) {
                     </div>
 
                     <img src={`/storage/${image.image_path}`} alt={image.description} className="rounded w-full" />
+                    <div className="mt-2 flex items-center gap-4">
+                        <LikeButton
+                            imageId={image.id}
+                            initialLiked={image.likes.some(l => l.user_id === user.id)}
+                            initialCount={image.likes.length}
+                        />
+                    </div>
                     <p className="mt-2 text-gray-800">{image.description}</p>
+                    {user.id === image.user_id && (
+                        <div className="mt-2 flex gap-4 text-sm">
+                            <a
+                                href={route('images.edit', image.id)}
+                                className="text-yellow-600"
+                            >
+                                ✏️ Editar
+                            </a>
+                            <button
+                                onClick={() => {
+                                    if (confirm('¿Seguro que quieres eliminar esta imagen?')) {
+                                        destroyImage(route('images.destroy', image.id), {
+                                            onSuccess: () => router.visit(route('dashboard')),
+                                        });
+                                    }
+                                }}
+                                className="text-red-600"
+                            >
+                                🗑 Eliminar
+                            </button>
+                        </div>
+                    )}
 
                     <div className="mt-4">
                         <h3 className="font-semibold mb-2">💬 Comentarios</h3>
@@ -90,7 +124,7 @@ export default function Show({ image }) {
                                                     setEditingCommentId(comment.id);
                                                     setEditingContent(comment.content);
                                                 }} className="text-yellow-600">✏️ Editar</button>
-                                                <button onClick={() => handleDelete(comment.id)} className="text-red-600">🗑 Eliminar</button>
+                                                <button onClick={(e) => handleDelete(comment.id, e)} className="text-red-600">🗑 Eliminar</button>
                                             </div>
                                         )}
                                     </div>

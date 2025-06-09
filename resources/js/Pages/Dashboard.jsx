@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
+import Pagination from '@/Components/Pagination';
+import LikeButton from '@/Components/LikeButton';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -40,8 +42,9 @@ export default function Dashboard() {
                 {images.data.length === 0 ? (
                     <p className="text-gray-500">Encara no hi ha imatges.</p>
                 ) : (
-                    <div className="space-y-6">
-                        {images.data.map((image) => (
+                    <>
+                        <div className="space-y-6">
+                            {images.data.map((image) => (
                             <Link
                                 key={image.id}
                                 href={route('images.show', image.id)}
@@ -61,20 +64,28 @@ export default function Dashboard() {
                                     src={`/storage/${image.image_path}`}
                                     alt={image.description}
                                     className="rounded w-full mt-2"
-                                    onError={() =>
-                                        setError(`⚠️ No se pudo cargar la imagen: ${image.image_path}`)
-                                    }
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://via.placeholder.com/600x400?text=Imagen+no+disponible';
+                                        setError(`⚠️ No se pudo cargar la imagen: ${image.image_path}`);
+                                    }}
                                 />
 
                                 <p className="mt-2 text-gray-700">{image.description}</p>
 
                                 <div className="flex items-center mt-4 text-sm text-gray-600 gap-4">
-                                    <span>❤️ {image.likes?.length || 0} likes</span>
+                                    <LikeButton
+                                        imageId={image.id}
+                                        initialLiked={image.likes?.some(l => l.user_id === user.id)}
+                                        initialCount={image.likes?.length || 0}
+                                    />
                                     <span>💬 {image.comments?.length || 0} comentarios</span>
                                 </div>
                             </Link>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                        <Pagination links={images.links} />
+                    </>
                 )}
             </div>
         </AuthenticatedLayout>
