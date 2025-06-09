@@ -35,7 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-    // Vista individual de imagen
+    // Imágenes
+    Route::get('/images/create', [ImageController::class, 'create'])->name('images.create');
+    Route::post('/images', [ImageController::class, 'store'])->name('images.store');
+    Route::get('/images/{image}/edit', [ImageController::class, 'edit'])->name('images.edit');
+    Route::put('/images/{image}', [ImageController::class, 'update'])->name('images.update');
+    Route::delete('/images/{image}', [ImageController::class, 'destroy'])->name('images.destroy');
     Route::get('/images/{id}', [ImageController::class, 'show'])->name('images.show');
 });
 
