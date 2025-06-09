@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -32,10 +33,18 @@ class ImageController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('images', 'public');
         } else {
-            $contents = @file_get_contents($validated['image_url']);
-            $ext = pathinfo(parse_url($validated['image_url'], PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
-            $path = 'images/' . uniqid() . '.' . $ext;
-            Storage::disk('public')->put($path, $contents);
+            try {
+                $response = Http::timeout(10)->get($validated['image_url']);
+                if (!$response->successful()) {
+                    return Redirect::back()->withErrors(['image_url' => 'No se pudo descargar la imagen.']);
+                }
+                $contents = $response->body();
+                $ext = pathinfo(parse_url($validated['image_url'], PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                $path = 'images/' . uniqid() . '.' . $ext;
+                Storage::disk('public')->put($path, $contents);
+            } catch (\Exception $e) {
+                return Redirect::back()->withErrors(['image_url' => 'No se pudo descargar la imagen.']);
+            }
         }
 
         $image = Image::create([
@@ -75,11 +84,18 @@ class ImageController extends Controller
             $image->image_path = $request->file('image')->store('images', 'public');
         } elseif (!empty($validated['image_url'])) {
             Storage::disk('public')->delete($image->image_path);
-            $contents = @file_get_contents($validated['image_url']);
-            $ext = pathinfo(parse_url($validated['image_url'], PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
-            $path = 'images/' . uniqid() . '.' . $ext;
-            Storage::disk('public')->put($path, $contents);
-            $image->image_path = $path;
+            try {
+                $response = Http::timeout(10)->get($validated['image_url']);
+                if ($response->successful()) {
+                    $contents = $response->body();
+                    $ext = pathinfo(parse_url($validated['image_url'], PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                    $path = 'images/' . uniqid() . '.' . $ext;
+                    Storage::disk('public')->put($path, $contents);
+                    $image->image_path = $path;
+                }
+            } catch (\Exception $e) {
+                return Redirect::back()->withErrors(['image_url' => 'No se pudo descargar la imagen.']);
+            }
         }
 
         $image->description = $validated['description'] ?? $image->description;

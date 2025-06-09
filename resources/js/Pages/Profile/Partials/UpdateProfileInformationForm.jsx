@@ -9,7 +9,7 @@ import { Link, useForm, usePage } from '@inertiajs/react';
 export default function UpdateProfileInformationForm({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         name: user.name ?? '',
         surname: user.surname ?? '',
         nick: user.nick ?? '',
@@ -20,8 +20,7 @@ export default function UpdateProfileInformationForm({ mustVerifyEmail, status, 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('profile.update'), {
-            _method: 'patch',
+        patch(route('profile.update'), {
             preserveScroll: true,
             onSuccess: () => setData('avatar', null),
             onError: () => setData('avatar', null),

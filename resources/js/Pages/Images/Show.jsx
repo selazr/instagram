@@ -120,11 +120,24 @@ export default function Show({ image }) {
                                         <p className="text-gray-700">{comment.content}</p>
                                         {comment.user.id === user.id && (
                                             <div className="flex gap-2 text-xs">
-                                                <button onClick={() => {
-                                                    setEditingCommentId(comment.id);
-                                                    setEditingContent(comment.content);
-                                                }} className="text-yellow-600">✏️ Editar</button>
-                                                <button onClick={(e) => handleDelete(comment.id, e)} className="text-red-600">🗑 Eliminar</button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setEditingCommentId(comment.id);
+                                                        setEditingContent(comment.content);
+                                                    }}
+                                                    className="text-yellow-600"
+                                                >
+                                                    ✏️ Editar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => handleDelete(comment.id, e)}
+                                                    className="text-red-600"
+                                                >
+                                                    🗑 Eliminar
+                                                </button>
                                             </div>
                                         )}
                                     </div>
