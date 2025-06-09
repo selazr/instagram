@@ -21,7 +21,9 @@ class CommentController extends Controller
             'content' => $request->content,
         ]);
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'created'])
+            : back();
     }
 
     public function update(Request $request, Comment $comment)
@@ -38,10 +40,12 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'updated'])
+            : back();
     }
 
-    public function destroy(Comment $comment)
+    public function destroy(Request $request, Comment $comment)
     {
         if ($comment->user_id !== Auth::id()) {
             abort(403, 'No tienes permiso para eliminar este comentario.');
@@ -49,6 +53,8 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return back();
+        return $request->wantsJson()
+            ? response()->json(['message' => 'deleted'])
+            : back();
     }
 }
