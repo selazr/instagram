@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState } from 'react';
@@ -14,6 +14,8 @@ export default function Show({ image }) {
         content: '',
         image_id: image.id,
     });
+
+    const { delete: destroyImage } = useForm();
 
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState('');
@@ -60,6 +62,28 @@ export default function Show({ image }) {
 
                     <img src={`/storage/${image.image_path}`} alt={image.description} className="rounded w-full" />
                     <p className="mt-2 text-gray-800">{image.description}</p>
+                    {user.id === image.user_id && (
+                        <div className="mt-2 flex gap-4 text-sm">
+                            <a
+                                href={route('images.edit', image.id)}
+                                className="text-yellow-600"
+                            >
+                                ✏️ Editar
+                            </a>
+                            <button
+                                onClick={() => {
+                                    if (confirm('¿Seguro que quieres eliminar esta imagen?')) {
+                                        destroyImage(route('images.destroy', image.id), {
+                                            onSuccess: () => router.visit(route('dashboard')),
+                                        });
+                                    }
+                                }}
+                                className="text-red-600"
+                            >
+                                🗑 Eliminar
+                            </button>
+                        </div>
+                    )}
 
                     <div className="mt-4">
                         <h3 className="font-semibold mb-2">💬 Comentarios</h3>

@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link } from '@inertiajs/react';
+import Pagination from '@/Components/Pagination';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -40,8 +41,9 @@ export default function Dashboard() {
                 {images.data.length === 0 ? (
                     <p className="text-gray-500">Encara no hi ha imatges.</p>
                 ) : (
-                    <div className="space-y-6">
-                        {images.data.map((image) => (
+                    <>
+                        <div className="space-y-6">
+                            {images.data.map((image) => (
                             <Link
                                 key={image.id}
                                 href={route('images.show', image.id)}
@@ -61,9 +63,11 @@ export default function Dashboard() {
                                     src={`/storage/${image.image_path}`}
                                     alt={image.description}
                                     className="rounded w-full mt-2"
-                                    onError={() =>
-                                        setError(`⚠️ No se pudo cargar la imagen: ${image.image_path}`)
-                                    }
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://via.placeholder.com/600x400?text=Imagen+no+disponible';
+                                        setError(`⚠️ No se pudo cargar la imagen: ${image.image_path}`);
+                                    }}
                                 />
 
                                 <p className="mt-2 text-gray-700">{image.description}</p>
@@ -73,8 +77,10 @@ export default function Dashboard() {
                                     <span>💬 {image.comments?.length || 0} comentarios</span>
                                 </div>
                             </Link>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                        <Pagination links={images.links} />
+                    </>
                 )}
             </div>
         </AuthenticatedLayout>
