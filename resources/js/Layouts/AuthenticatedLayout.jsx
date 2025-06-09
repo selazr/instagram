@@ -34,6 +34,12 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            <Link
+                                href={route('images.create')}
+                                className="me-4 text-sm text-gray-600 hover:text-gray-800"
+                            >
+                                Nueva imagen
+                            </Link>
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
