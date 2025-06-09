@@ -22,7 +22,9 @@ export default function UpdateProfileInformationForm({ mustVerifyEmail, status, 
 
         patch(route('profile.update'), {
             preserveScroll: true,
+            onSuccess: () => setData('avatar', null),
             onError: () => setData('avatar', null),
+            forceFormData: true,
         });
     };
 
