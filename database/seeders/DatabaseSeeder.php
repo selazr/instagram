@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Creamos 15 imágenes para ese usuario
-        Image::factory(15)->create([
+        Image::factory(count: 15)->create([
             'user_id' => $user->id,
         ]);
     }
