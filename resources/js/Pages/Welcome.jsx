@@ -15,7 +15,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     return (
         <>
             <Head title="Welcome" />
-            <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 text-black/50 dark:bg-black dark:text-white/50">
                 <img
                     id="background"
                     className="absolute -left-20 top-0 max-w-[877px]"
@@ -114,18 +114,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
                                                 <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                    Documentation
+                                                    Bienvenido a la nueva interfaz
                                                 </h2>
 
                                                 <p className="mt-4 text-sm/relaxed">
-                                                    Laravel has wonderful
-                                                    documentation covering every
-                                                    aspect of the framework.
-                                                    Whether you are a newcomer
-                                                    or have prior experience
-                                                    with Laravel, we recommend
-                                                    reading our documentation
-                                                    from beginning to end.
+                                                    Descubre el nuevo aspecto moderno de nuestra aplicación.
                                                 </p>
                                             </div>
                                         </div>
